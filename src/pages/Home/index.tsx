@@ -1,8 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { differenceInSeconds } from 'date-fns'
+import { Play } from 'phosphor-react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import * as zod from 'zod'
 
-import { Play } from 'phosphor-react'
 import {
   CountDownContainer,
   FomContainer,
@@ -20,7 +22,18 @@ const newCycleFormValidationSchema = zod.object({
 
 type NewCycleFormData = zod.infer<typeof newCycleFormValidationSchema>
 
+interface Cycle {
+  id: string
+  task: string
+  minutesAmount: number
+  startDate: Date
+}
+
 export function Home() {
+  const [cycles, setCycles] = useState<Cycle[]>([])
+  const [activeCycleId, setActiveCycleId] = useState<string | null>(null)
+  const [amountSecondPassed, setAmountSecondPasses] = useState(0)
+
   const { register, handleSubmit, watch, reset } = useForm<NewCycleFormData>({
     resolver: zodResolver(newCycleFormValidationSchema),
     defaultValues: {
@@ -30,12 +43,43 @@ export function Home() {
   })
 
   const handleCreateNewCycle = (data: NewCycleFormData) => {
-    console.log(data)
+    const id = String(new Date().getTime())
+
+    const newCycles: Cycle = {
+      id,
+      task: data.task,
+      minutesAmount: data.minutesAmount,
+      startDate: new Date(),
+    }
+
+    setCycles((state) => [...state, newCycles])
+    setActiveCycleId(id)
     reset()
   }
 
+  const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
+
+  const totalSecond = activeCycle ? activeCycle.minutesAmount * 60 : 0
+  const currentSecond = activeCycle ? totalSecond - amountSecondPassed : 0
+
+  const minuteAmount = Math.floor(currentSecond / 60)
+  const secondsAmount = currentSecond % 60
+
+  const minutes = String(minuteAmount).padStart(2, '0')
+  const second = String(secondsAmount).padStart(2, '0')
+
   const task = watch('task')
   const isSubmitDisabled = !task
+
+  useEffect(() => {
+    if (activeCycle) {
+      setInterval(() => {
+        setAmountSecondPasses(
+          differenceInSeconds(new Date(), activeCycle.startDate),
+        )
+      }, 1000)
+    }
+  }, [activeCycle])
 
   return (
     <HomeContainer>
@@ -71,11 +115,11 @@ export function Home() {
         </FomContainer>
 
         <CountDownContainer>
-          <span>0</span>
-          <span>0</span>
+          <span>{minutes[0]}</span>
+          <span>{minutes[1]}</span>
           <Separator>:</Separator>
-          <span>0</span>
-          <span>0</span>
+          <span>{second[0]}</span>
+          <span>{second[1]}</span>
         </CountDownContainer>
 
         <StartCountdownButton type="submit" disabled={isSubmitDisabled}>
