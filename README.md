@@ -1,4 +1,4 @@
-<h1 align="center"> Todo List </h1>
+<h1 align="center"> Timer Pomodoro </h1>
 
 
 <div align="center">
