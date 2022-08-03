@@ -45,9 +45,17 @@ export function CyclesContextProvider({
       activeCycleId: null,
     },
     () => {
-      const storedStateJSON = localStorage.getItem('@timer:cycles-state-1.0.0')
-      if (storedStateJSON) {
-        return JSON.parse(storedStateJSON)
+      const storedStateAsJSON = localStorage.getItem(
+        '@ignite-timer:cycles-state-1.0.0',
+      )
+
+      if (storedStateAsJSON) {
+        return JSON.parse(storedStateAsJSON)
+      } else {
+        return {
+          cycles: [],
+          activeCycleId: null,
+        }
       }
     },
   )
@@ -61,6 +69,12 @@ export function CyclesContextProvider({
     }
     return 0
   })
+
+  useEffect(() => {
+    const stateJSON = JSON.stringify(cyclesState)
+
+    localStorage.setItem('@ignite-timer:cycles-state-1.0.0', stateJSON)
+  }, [cyclesState])
 
   function setSecondsPassed(seconds: number) {
     setAmountSecondsPassed(seconds)
@@ -81,6 +95,7 @@ export function CyclesContextProvider({
     }
 
     dispatch(addNewCycleAction(newCycle))
+
     setAmountSecondsPassed(0)
   }
 
@@ -88,11 +103,9 @@ export function CyclesContextProvider({
     dispatch(InterruptCurrentCycleAction())
   }
 
-  useEffect(() => {
-    const stateJason = JSON.stringify(cyclesState)
+  // useEffect(() => {
 
-    localStorage.setItem('@timer:cycles-state-1.0.0', stateJason)
-  }, [cyclesState])
+  // }, [])
 
   return (
     <CyclesContext.Provider

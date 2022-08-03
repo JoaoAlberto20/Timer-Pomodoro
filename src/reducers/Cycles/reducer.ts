@@ -1,4 +1,5 @@
-import produce from 'immer'
+import { produce } from 'immer'
+
 import { ActionTypes } from './actions'
 
 export interface Cycle {
@@ -47,6 +48,7 @@ export function cyclesReducer(state: CyclesState, action: any) {
 
       return produce(state, (draft) => {
         draft.activeCycleId = null
+        draft.cycles[currentCycleIndex].finishedDate = new Date()
       })
     }
     default:
