@@ -3,7 +3,7 @@
 
 <div align="center">
 
-![Preview](./todoList.png)
+![Preview](./timerPomodoro.png)
 
 </div>
 
