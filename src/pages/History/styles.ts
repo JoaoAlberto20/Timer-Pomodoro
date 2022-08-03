@@ -3,6 +3,7 @@ import styled from 'styled-components'
 export const HistoryContainer = styled.main`
   flex: 1;
   padding: 3.5rem;
+  height: 100%;
 
   display: flex;
   flex-direction: column;
@@ -16,7 +17,6 @@ export const HistoryContainer = styled.main`
 export const HistoryList = styled.div`
   flex: 1;
   overflow: auto;
-
   margin-top: 2rem;
 
   table {
@@ -58,6 +58,20 @@ export const HistoryList = styled.div`
         padding-right: 1.5rem;
       }
     }
+  }
+
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: ${(props) => props.theme['gray-600']};
+    border-radius: 100px;
+
+    border: 6px solid ${(props) => props.theme['gray-600']};
   }
 `
 
